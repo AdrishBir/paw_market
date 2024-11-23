@@ -1,0 +1,17 @@
+version: "4.5"
+
+services:
+  petcare-app:
+    image: postgres:latest
+    container_name: petcare_database
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: petcare
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: petcare
+      POSTGRES_HOST_AUTH_METHOD: trust
+    ports:
+      - "0.0.0.0:5432:5432" # Expose to all external IPs
+volumes:
+  db_data:
