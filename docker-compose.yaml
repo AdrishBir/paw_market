@@ -15,3 +15,5 @@ services:
       - "0.0.0.0:5432:5432" # Expose to all external IPs
 volumes:
   db_data:
+
+#addline
