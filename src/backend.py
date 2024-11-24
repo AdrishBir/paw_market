@@ -3,11 +3,13 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///marketplace.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://petcare:password@localhost:5000/petcare'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # Optional, to suppress warnings
 db = SQLAlchemy(app)
 
 # Product Model
 class Product(db.Model):
+    __tablename__ = 'products'  # Explicitly set table name
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text)
@@ -16,6 +18,7 @@ class Product(db.Model):
 
 # Buyer Model
 class Buyer(db.Model):
+    __tablename__ = 'buyers'  # Explicitly set table name
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
@@ -25,9 +28,10 @@ class Buyer(db.Model):
 
 # Order Model
 class Order(db.Model):
+    __tablename__ = 'orders'  # Explicitly set table name
     id = db.Column(db.Integer, primary_key=True)
-    buyer_id = db.Column(db.Integer, db.ForeignKey('buyer.id'), nullable=False)
-    product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable=False)
+    buyer_id = db.Column(db.Integer, db.ForeignKey('buyers.id'), nullable=False)
+    product_id = db.Column(db.Integer, db.ForeignKey('products.id'), nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
     total_price = db.Column(db.Float, nullable=False)
     status = db.Column(db.String(20), default='pending')
@@ -35,12 +39,10 @@ class Order(db.Model):
 
     product = db.relationship('Product', backref='orders')
 
-
 # Home Route
 @app.route('/')
 def home():
     return "Welcome to the Marketplace API!", 200
-
 
 # Product Routes
 @app.route('/products', methods=['GET'])
@@ -57,7 +59,6 @@ def get_products():
         })
 
     return jsonify({'products': products_list}), 200
-
 
 # Buyer Routes
 @app.route('/buyer/register', methods=['POST'])
@@ -79,8 +80,8 @@ def register_buyer():
         return jsonify({'message': 'Buyer registered successfully', 'buyer_id': new_buyer.id}), 201
     except Exception as e:
         print(e)
+        db.session.rollback()
         return jsonify({'error': 'Username or email already exists'}), 400
-
 
 @app.route('/buyer/orders', methods=['POST'])
 def create_order():
@@ -109,8 +110,8 @@ def create_order():
         return jsonify({'message': 'Order created successfully'}), 201
     except Exception as e:
         print(e)
+        db.session.rollback()
         return jsonify({'error': 'Failed to create order'}), 400
-
 
 @app.route('/buyer/orders/<int:buyer_id>', methods=['GET'])
 def get_buyer_orders(buyer_id):
@@ -129,7 +130,6 @@ def get_buyer_orders(buyer_id):
         })
 
     return jsonify({'orders': orders_list}), 200
-
 
 @app.route('/buyer/profile/<int:buyer_id>', methods=['GET', 'PUT'])
 def buyer_profile(buyer_id):
@@ -155,13 +155,12 @@ def buyer_profile(buyer_id):
             return jsonify({'message': 'Profile updated successfully'}), 200
         except Exception as e:
             print(e)
+            db.session.rollback()
             return jsonify({'error': 'Failed to update profile'}), 400
-
 
 @app.route('/shop')
 def shop():
     return render_template('index.html')
-
 
 if __name__ == '__main__':
     with app.app_context():
