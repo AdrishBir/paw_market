@@ -1,4 +1,4 @@
-version: "4.5"
+version: "3.9"
 
 services:
   database_budjet-app:
@@ -11,7 +11,7 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: petcare
       POSTGRES_HOST_AUTH_METHOD: trust
-    ports:
-      - "0.0.0.0:5432:5432" # Expose to all external IPs
+    ports: 
+      - "5000:5432"
 volumes:
   db_data:

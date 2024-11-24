@@ -1,5 +1,5 @@
 import unittest
-from basic import app, db, Buyer, Order
+from backend import app, db, Buyer, Order
 import json
 
 class TestBuyerRoutes(unittest.TestCase):
