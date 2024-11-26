@@ -6,6 +6,9 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///marketplace.db'
 db = SQLAlchemy(app)
 
+
+# testing
+
 # Product Model
 class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
