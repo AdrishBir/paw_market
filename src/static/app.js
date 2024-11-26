@@ -1,4 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
+    let registeredBuyer = null; // Store registered buyer details
+
     // Fetch and display products
     fetch('/products')
         .then(response => response.json())
@@ -7,16 +9,15 @@ document.addEventListener('DOMContentLoaded', () => {
             const productSelect = document.getElementById('product-select');
 
             data.products.forEach(product => {
-                // Display product details
                 const productInfo = document.createElement('div');
+                productInfo.className = 'product-card';
                 productInfo.innerHTML = `
-                    <strong>${product.name}</strong><br>
-                    ${product.description}<br>
-                    Price: $${product.price.toFixed(2)}<br><br>
+                    <div class="product-title"><strong>${product.name}</strong></div>
+                    <div class="product-description">${product.description}</div>
+                    <div class="product-price">Price: $${product.price.toFixed(2)}</div>
                 `;
                 productsDiv.appendChild(productInfo);
 
-                // Add product to the select dropdown
                 const option = document.createElement('option');
                 option.value = product.id;
                 option.textContent = `${product.name} - $${product.price.toFixed(2)}`;
@@ -30,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
         event.preventDefault();
 
         const username = document.getElementById('username').value;
-        const email    = document.getElementById('email').value;
+        const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
 
         fetch('/buyer/register', {
@@ -45,8 +46,41 @@ document.addEventListener('DOMContentLoaded', () => {
                 messagePara.textContent = `Error: ${data.error}`;
             } else {
                 messagePara.textContent = `Success: ${data.message}. Your Buyer ID is ${data.buyer_id}.`;
+                registeredBuyer = { username, email, password, buyer_id: data.buyer_id }; // Save details
             }
         });
+    });
+
+    // Handle buyer login
+    const loginForm = document.getElementById('login-form');
+    loginForm.addEventListener('submit', event => {
+        event.preventDefault();
+
+        const email = document.getElementById('login-email').value;
+        const password = document.getElementById('login-password').value;
+
+        if (registeredBuyer && email === registeredBuyer.email && password === registeredBuyer.password) {
+            const helloMessage = document.getElementById('hello');
+            helloMessage.textContent = `Welcome, ${registeredBuyer.username}! Your Buyer ID is ${registeredBuyer.buyer_id}.`;
+            helloMessage.style.color = 'green';
+        } else {
+            fetch('/buyer/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const helloMessage = document.getElementById('hello');
+                if (data.error) {
+                    helloMessage.textContent = `Error: ${data.error}`;
+                    helloMessage.style.color = 'red';
+                } else {
+                    helloMessage.textContent = `Welcome, ${data.username}! Your Buyer ID is ${data.buyer_id}.`;
+                    helloMessage.style.color = 'green';
+                }
+            });
+        }
     });
 
     // Handle order placement
@@ -54,9 +88,9 @@ document.addEventListener('DOMContentLoaded', () => {
     orderForm.addEventListener('submit', event => {
         event.preventDefault();
 
-        const buyerId    = parseInt(document.getElementById('buyer-id').value);
-        const productId  = parseInt(document.getElementById('product-select').value);
-        const quantity   = parseInt(document.getElementById('quantity').value);
+        const buyerId = parseInt(document.getElementById('buyer-id').value);
+        const productId = parseInt(document.getElementById('product-select').value);
+        const quantity = parseInt(document.getElementById('quantity').value);
 
         fetch('/buyer/orders', {
             method: 'POST',
