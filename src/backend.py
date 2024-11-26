@@ -7,6 +7,8 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://petcare:password@localhost
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # Optional, to suppress warnings
 db = SQLAlchemy(app)
 
+# testing
+
 # Product Model
 class Product(db.Model):
     __tablename__ = 'products'  # Explicitly set table name
