@@ -10,7 +10,7 @@ services:
       POSTGRES_USER: petcare
       POSTGRES_PASSWORD: password
       POSTGRES_DB: petcare
-      POSTGRES_HOST_AUTH_METHOD: trust
+      # POSTGRES_HOST_AUTH_METHOD: trust
     ports: 
       - "5000:5432"
 volumes:
