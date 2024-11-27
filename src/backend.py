@@ -29,6 +29,10 @@ class Buyer(db.Model):
     password = db.Column(db.String(120), nullable=False)  # In production, hash the password!
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
+# Home Page
+@app.route('/')
+def home_page():
+    return render_template('home.html')
 # Registration Page
 @app.route('/register', methods=['GET', 'POST'])
 def register_page():

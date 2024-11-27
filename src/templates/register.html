@@ -12,10 +12,14 @@
             font-family: 'Roboto', sans-serif;
             margin: 0;
             padding: 0;
-            background: url('https://img.freepik.com/premium-vector/cartoon-dog-cat-with-blank-signboard-graphic-design_11460-13504.jpg') no-repeat center center fixed;
+            background: url('https://w0.peakpx.com/wallpaper/809/337/HD-wallpaper-pets-in-the-park-rabbit-cat-tortoise-frog-pet-lizard-butterfly-bird-dog.jpg') no-repeat center center fixed;
             background-size: cover;
             color: #333;
             position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
         }
         body::before {
             content: '';
@@ -26,6 +30,33 @@
             height: 100%;
             background: rgba(0, 0, 0, 0.4); /* Overlay for text readability */
             z-index: -1;
+        }
+        .container {
+            display: flex;
+            max-width: 1200px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.7); /* Made transparent */
+            border-radius: 10px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+        .form-section {
+            flex: 1;
+            padding: 2rem;
+            animation: fadeIn 2s ease-in-out;
+        }
+        .image-section {
+            flex: 0.8; /* 20 percent smaller */
+            background: url('https://thumbs.dreamstime.com/b/three-kittens-puppy-pose-together-budgie-white-background-326678680.jpg') no-repeat center center;
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .image-section img {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
         }
         header {
             background-color: rgba(76, 175, 80, 0.8);
@@ -38,14 +69,6 @@
             margin: 0;
             font-size: 2.5rem;
             letter-spacing: 1px;
-        }
-        main {
-            max-width: 900px;
-            margin: 3rem auto;
-            padding: 2rem;
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 10px;
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
         }
         section {
             margin-bottom: 2rem;
@@ -79,34 +102,6 @@
             background-color: #45a049;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
         }
-        #products {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 1.5rem;
-            padding: 1.5rem 0;
-        }
-        .product-card {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 1.5rem;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            text-align: center;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .product-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
-        }
-        .product-title {
-            font-size: 1.2rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-        }
-        .product-price {
-            color: #4caf50;
-            font-weight: 500;
-            margin-top: 0.5rem;
-        }
         footer {
             text-align: center;
             padding: 1.5rem;
@@ -122,11 +117,27 @@
             text-decoration: underline;
         }
         @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            .image-section {
+                height: 170px;
+            }
             h1 {
                 font-size: 2rem;
             }
             h2 {
                 font-size: 1.5rem;
+            }
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
             }
         }
     </style>
@@ -135,22 +146,27 @@
     <header>
         <h1>Welcome to the Marketplace</h1>
     </header>
-    <main>
-        <section>
-            <h2>Register as a Buyer</h2>
-            <form id="register-form">
-                <input type="text" id="username" placeholder="Username" required />
-                <input type="email" id="email" placeholder="Email" required />
-                <input type="password" id="password" placeholder="Password" required />
-                <button type="submit">Register</button>
-            </form>
-            <p id="register-message"></p>
-            <!-- Add a button for existing users -->
-            <button id="login-button" style="background-color: #007bff; color: white; border: none; border-radius: 4px; padding: 10px; margin-top: 10px; cursor: pointer;">
-                Already a user? Go to Login
-            </button>
-        </section>
-    </main>
+    <div class="container">
+        <div class="form-section">
+            <section>
+                <h2>Register as a Buyer</h2>
+                <form id="register-form">
+                    <input type="text" id="username" placeholder="Username" required />
+                    <input type="email" id="email" placeholder="Email" required />
+                    <input type="password" id="password" placeholder="Password" required />
+                    <button type="submit">Register</button>
+                </form>
+                <p id="register-message"></p>
+                <!-- Add a button for existing users -->
+                <button id="login-button" style="background-color: #007bff; color: white; border: none; border-radius: 4px; padding: 10px; margin-top: 10px; cursor: pointer;">
+                    Already a user? Go to Login
+                </button>
+            </section>
+        </div>
+        <div class="image-section">
+            <img src="https://thumbs.dreamstime.com/b/three-kittens-puppy-pose-together-budgie-white-background-326678680.jpg" alt="Pets">
+        </div>
+    </div>
     <footer>
         <p>&copy; 2024 Marketplace. All rights reserved. <a href="/privacy-policy">Privacy Policy</a></p>
     </footer>

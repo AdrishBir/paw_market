@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adopt or Post Pet</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to bottom, #A7C7E7, #F4F4F9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .container {
+            text-align: center;
+            max-width: 500px;
+            padding: 30px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .option-btn {
+            padding: 15px;
+            font-size: 1.2rem;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            width: 250px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .option-btn:hover {
+            background-color: #45a049;
+            transform: scale(1.05);
+        }
+
+        .option-btn:active {
+            background-color: #3e8e41;
+            transform: scale(0.98);
+        }
+
+        .option-btn:focus {
+            outline: none;
+        }
+
+        .option-btn i {
+            font-size: 1.5rem; /* Icon size */
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(30px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .info-text {
+            font-size: 1rem;
+            color: #555;
+            margin-top: 10px;
+        }
+
+        .footer {
+            font-size: 0.9rem;
+            color: #888;
+            margin-top: 20px;
+        }
+
+        .footer a {
+            color: #4CAF50;
+            text-decoration: none;
+        }
+    </style>
+    <!-- Include FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to our Pet Adoption Hub</h1>
+        <p class="info-text">We help you connect with lovely pets looking for a forever home.</p>
+
+        <div class="options">
+            <!-- Adopt Button with a paw icon -->
+            <button class="option-btn" id="adoptBtn">
+                <i class="fas fa-paw"></i> Adopt a Pet
+            </button>
+            
+            <!-- Post for Adoption Button with a home icon -->
+            <button class="option-btn" id="postAdoptBtn">
+                <i class="fas fa-house-user"></i> Post a Pet for Adoption
+            </button>
+        </div>
+
+        <p class="footer">Have any questions? <a href="mailto:support@petadopt.com">Contact us</a></p>
+    </div>
+
+    <script>
+        const adoptBtn = document.getElementById('adoptBtn');
+        const postAdoptBtn = document.getElementById('postAdoptBtn');
+
+        // Event listener for the "Adopt Pet" button
+        adoptBtn.addEventListener('click', () => {
+            // Smooth animation before redirect
+            adoptBtn.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                window.location.href = '/register';  // Redirect to the register page for adoption
+            }, 200);  // Delay for the scale animation
+        });
+
+        // Event listener for the "Post for Adoption" button
+        postAdoptBtn.addEventListener('click', () => {
+            postAdoptBtn.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                alert('You have chosen to post a pet for adoption.');  // Placeholder for post adoption logic
+            }, 200);
+        });
+    </script>
+</body>
+</html>
