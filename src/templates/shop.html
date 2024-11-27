@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop - Products</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 1rem 0;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        h1, h2 {
+            margin: 0;
+        }
+
+        h2 {
+            margin: 1rem 0;
+            text-align: center;
+            color: #333;
+        }
+
+        .products-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            padding: 2rem;
+        }
+
+        .product-card {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 300px;
+            padding: 1rem;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .product-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .product-card img {
+            width: 100%;
+            height: auto;
+            max-height: 250px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+
+        .product-card:hover img {
+            transform: scale(1.1);
+            opacity: 0.85;
+        }
+
+        .product-card h3 {
+            font-size: 1rem;
+            margin: 0.5rem 0;
+            color: #333;
+        }
+
+        .product-card p {
+            color: #555;
+            font-size: 0.9rem;
+        }
+
+        .product-card .price {
+            font-weight: bold;
+            color: #27ae60;
+            margin: 0.5rem 0;
+            font-size: 1.1rem;
+        }
+
+        footer {
+            text-align: center;
+            padding: 1rem;
+            background-color: #333;
+            color: #fff;
+        }
+
+        footer a {
+            color: #1abc9c;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Add subtle animation to the product container */
+        .products-container {
+            animation: fadeIn 1s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Welcome to Our Shop</h1>
+    </header>
+    <h2>Available for adoption</h2>
+    <div class="products-container">
+        {% for product in products %}
+        <div class="product-card">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTrCKNGJiXRL5Y7kXs1itEPPMTZgEzeTKueig&s" alt="{{ product.name }}">
+            <h3>{{ product.name }}</h3>
+            <p>{{ product.description }}</p>
+            <p class="price">$ {{ product.price }}</p>
+        </div>
+        {% else %}
+        <p>No products available at the moment.</p>
+        {% endfor %}
+    </div>
+    <footer>
+        <p>Welcome, {{ session['username'] }}!</p>
+        <p><a href="{{ url_for('login_page') }}">Logout</a></p>
+    </footer>
+</body>
+</html>

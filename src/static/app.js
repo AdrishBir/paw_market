@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const productSelect = document.getElementById('product-select');
 
             data.products.forEach(product => {
+                // Display product card
                 const productInfo = document.createElement('div');
                 productInfo.className = 'product-card';
                 productInfo.innerHTML = `
@@ -18,6 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 `;
                 productsDiv.appendChild(productInfo);
 
+                // Populate product dropdown
                 const option = document.createElement('option');
                 option.value = product.id;
                 option.textContent = `${product.name} - $${product.price.toFixed(2)}`;
@@ -34,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
 
-        fetch('/buyer/register', {
+        fetch('/register', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username, email, password })
@@ -44,50 +46,59 @@ document.addEventListener('DOMContentLoaded', () => {
             const messagePara = document.getElementById('register-message');
             if (data.error) {
                 messagePara.textContent = `Error: ${data.error}`;
+                messagePara.style.color = 'red';
             } else {
-                messagePara.textContent = `Success: ${data.message}. Your Buyer ID is ${data.buyer_id}.`;
-                registeredBuyer = { username, email, password, buyer_id: data.buyer_id }; // Save details
+                messagePara.textContent = `Success: ${data.message}. Redirecting to login...`;
+                messagePara.style.color = 'green';
+                
+                // Redirect to login page after a short delay
+                setTimeout(() => {
+                    window.location.href = '/login';
+                }, 2000);
+            }
+        })
+        .catch(error => {
+            console.error('Registration error:', error);
+            const messagePara = document.getElementById('register-message');
+            messagePara.textContent = 'Error: Unable to register. Please try again.';
+            messagePara.style.color = 'red';
+        });
+    });
+
+    // Handle "Already a user?" button
+    const loginButton = document.getElementById('login-button');
+    loginButton.addEventListener('click', () => {
+        window.location.href = '/login';
+    });
+
+    // Handle buyer login
+    document.getElementById('login-form').addEventListener('submit', event => {
+        event.preventDefault();
+        const email = document.getElementById('login-email').value;
+        const password = document.getElementById('login-password').value;
+
+        fetch('/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        })
+        .then(response => response.json())
+        .then(data => {
+            const helloMessage = document.getElementById('hello');
+            if (data.error) {
+                helloMessage.textContent = `Error: ${data.error}`;
+                helloMessage.style.color = 'red';
+            } else {
+                helloMessage.textContent = `Welcome, ${data.username}! Your Buyer ID is ${data.buyer_id}.`;
+                helloMessage.style.color = 'green';
+                window.location.href = '/shop';
             }
         });
     });
 
-    // Handle buyer login
-    const loginForm = document.getElementById('login-form');
-    loginForm.addEventListener('submit', event => {
-        event.preventDefault();
-
-        const email = document.getElementById('login-email').value;
-        const password = document.getElementById('login-password').value;
-
-        if (registeredBuyer && email === registeredBuyer.email && password === registeredBuyer.password) {
-            const helloMessage = document.getElementById('hello');
-            helloMessage.textContent = `Welcome, ${registeredBuyer.username}! Your Buyer ID is ${registeredBuyer.buyer_id}.`;
-            helloMessage.style.color = 'green';
-        } else {
-            fetch('/buyer/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password })
-            })
-            .then(response => response.json())
-            .then(data => {
-                const helloMessage = document.getElementById('hello');
-                if (data.error) {
-                    helloMessage.textContent = `Error: ${data.error}`;
-                    helloMessage.style.color = 'red';
-                } else {
-                    helloMessage.textContent = `Welcome, ${data.username}! Your Buyer ID is ${data.buyer_id}.`;
-                    helloMessage.style.color = 'green';
-                }
-            });
-        }
-    });
-
     // Handle order placement
-    const orderForm = document.getElementById('order-form');
-    orderForm.addEventListener('submit', event => {
+    document.getElementById('order-form').addEventListener('submit', event => {
         event.preventDefault();
-
         const buyerId = parseInt(document.getElementById('buyer-id').value);
         const productId = parseInt(document.getElementById('product-select').value);
         const quantity = parseInt(document.getElementById('quantity').value);
@@ -107,157 +118,57 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
-});
 
-// Add some basic styling
-document.addEventListener('DOMContentLoaded', () => {
-    // Style the forms
-    const forms = document.querySelectorAll('form');
-    forms.forEach(form => {
-        form.style.maxWidth = '400px';
-        form.style.margin = '20px auto';
-        form.style.padding = '20px';
-        form.style.boxShadow = '0 0 10px rgba(0,0,0,0.1)';
-        form.style.borderRadius = '8px';
-    });
-
-    // Style the inputs
-    const inputs = document.querySelectorAll('input, select');
-    inputs.forEach(input => {
-        input.style.width = '100%';
-        input.style.padding = '8px';
-        input.style.marginBottom = '10px';
-        input.style.borderRadius = '4px';
-        input.style.border = '1px solid #ddd';
-    });
-
-    // Style the submit buttons
-    const buttons = document.querySelectorAll('button[type="submit"]');
-    buttons.forEach(button => {
-        button.style.width = '100%';
-        button.style.padding = '10px';
-        button.style.backgroundColor = '#4CAF50';
-        button.style.color = 'white';
-        button.style.border = 'none';
-        button.style.borderRadius = '4px';
-        button.style.cursor = 'pointer';
-        
-        // Add hover effect
-        button.addEventListener('mouseover', () => {
-            button.style.backgroundColor = '#45a049';
+    // Add styles dynamically
+    const applyStyles = () => {
+        const forms = document.querySelectorAll('form');
+        forms.forEach(form => {
+            Object.assign(form.style, {
+                maxWidth: '400px',
+                margin: '20px auto',
+                padding: '20px',
+                boxShadow: '0 0 10px rgba(0,0,0,0.1)',
+                borderRadius: '8px'
+            });
         });
-        button.addEventListener('mouseout', () => {
-            button.style.backgroundColor = '#4CAF50';
+
+        const inputs = document.querySelectorAll('input, select');
+        inputs.forEach(input => {
+            Object.assign(input.style, {
+                width: '100%',
+                padding: '8px',
+                marginBottom: '10px',
+                borderRadius: '4px',
+                border: '1px solid #ddd'
+            });
         });
-    });
 
-    // Style the message paragraphs
-    const messages = document.querySelectorAll('#register-message, #order-message');
-    messages.forEach(message => {
-        message.style.margin = '10px 0';
-        message.style.padding = '10px';
-        message.style.borderRadius = '4px';
-        message.style.backgroundColor = '#f8f9fa';
-        message.style.textAlign = 'center';
-    });
+        const buttons = document.querySelectorAll('button[type="submit"]');
+        buttons.forEach(button => {
+            Object.assign(button.style, {
+                width: '100%',
+                padding: '10px',
+                backgroundColor: '#4CAF50',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: 'pointer'
+            });
+            button.addEventListener('mouseover', () => {
+                button.style.backgroundColor = '#45a049';
+            });
+            button.addEventListener('mouseout', () => {
+                button.style.backgroundColor = '#4CAF50';
+            });
+        });
+
+        document.body.style = `
+            background: url('https://img.freepik.com/premium-vector/cartoon-dog-cat-with-blank-signboard-graphic-design_11460-13504.jpg') 
+            top center / contain no-repeat fixed, rgba(255, 255, 255, 0.5);
+            background-blend-mode: overlay;
+            min-height: 100vh;
+        `;
+    };
+
+    applyStyles();
 });
-// Style the product cards
-const productCards = document.querySelectorAll('.product-card');
-productCards.forEach(card => {
-    card.style.border = '1px solid #ddd';
-    card.style.borderRadius = '8px';
-    card.style.padding = '15px';
-    card.style.margin = '10px';
-    card.style.width = '250px';
-    card.style.display = 'inline-block';
-    card.style.verticalAlign = 'top';
-    card.style.backgroundColor = 'white';
-    card.style.boxShadow = '0 2px 5px rgba(0,0,0,0.1)';
-});
-
-// Style the product images
-const productImages = document.querySelectorAll('.product-image');
-productImages.forEach(img => {
-    img.style.width = '100%';
-    img.style.height = '200px';
-    img.style.objectFit = 'cover';
-    img.style.borderRadius = '4px';
-    img.style.marginBottom = '10px';
-});
-
-// Style the product titles
-const productTitles = document.querySelectorAll('.product-title');
-productTitles.forEach(title => {
-    title.style.fontSize = '18px';
-    title.style.fontWeight = 'bold';
-    title.style.marginBottom = '8px';
-    title.style.color = '#333';
-});
-
-// Style the product prices
-const productPrices = document.querySelectorAll('.product-price');
-productPrices.forEach(price => {
-    price.style.fontSize = '16px';
-    price.style.color = '#4CAF50';
-    price.style.marginBottom = '10px';
-    price.style.fontWeight = '500';
-});
-
-// Style the product descriptions
-const productDescriptions = document.querySelectorAll('.product-description');
-productDescriptions.forEach(desc => {
-    desc.style.fontSize = '14px';
-    desc.style.color = '#666';
-    desc.style.marginBottom = '15px';
-    desc.style.lineHeight = '1.4';
-});
-
-// Style the add to cart buttons
-const addToCartButtons = document.querySelectorAll('.add-to-cart');
-addToCartButtons.forEach(button => {
-    button.style.width = '100%';
-    button.style.padding = '8px';
-    button.style.backgroundColor = '#4CAF50';
-    button.style.color = 'white';
-    button.style.border = 'none';
-    button.style.borderRadius = '4px';
-    button.style.cursor = 'pointer';
-    button.style.fontSize = '14px';
-    
-    // Add hover effect
-    button.addEventListener('mouseover', () => {
-        button.style.backgroundColor = '#45a049';
-    });
-    button.addEventListener('mouseout', () => {
-        button.style.backgroundColor = '#4CAF50';
-    });
-});
-
-// Style the products container
-const productsContainer = document.querySelector('#products-container');
-if (productsContainer) {
-    productsContainer.style.padding = '20px';
-    productsContainer.style.maxWidth = '1200px';
-    productsContainer.style.margin = '0 auto';
-    productsContainer.style.textAlign = 'center';
-}
-
-// Style the quantity inputs
-const quantityInputs = document.querySelectorAll('.quantity-input');
-quantityInputs.forEach(input => {
-    input.style.width = '60px';
-    input.style.padding = '5px';
-    input.style.marginBottom = '10px';
-    input.style.borderRadius = '4px';
-    input.style.border = '1px solid #ddd';
-    input.style.textAlign = 'center';
-});
-
-// Add background image to the body
-document.body.style.backgroundImage = "url('https://media.gettyimages.com/id/979081604/photo/kitten-sitting-on-dog.jpg?s=612x612&w=gi&k=20&c=gEKiIdzPQ8u3hZvf95mxqn2p7jttefJp1WTINiDqUr0=')";
-document.body.style.backgroundSize = 'cover';
-document.body.style.backgroundPosition = 'center';
-document.body.style.backgroundRepeat = 'no-repeat';
-document.body.style.backgroundAttachment = 'fixed';
-document.body.style.minHeight = '100vh';
-

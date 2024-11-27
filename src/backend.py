@@ -1,179 +1,125 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template, redirect, url_for, session
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+import os
 
 app = Flask(__name__)
+app.secret_key = os.urandom(24)  # To keep session data safe
+
+# Database configuration
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://petcare:password@localhost:5002/petcare'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # Optional, to suppress warnings
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
-# Product Model
+# Models
 class Product(db.Model):
-    __tablename__ = 'products'  # Explicitly set table name
+    __tablename__ = 'products'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text)
     price = db.Column(db.Float, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    image_url = db.Column(db.String(200))
 
-# Buyer Model
 class Buyer(db.Model):
-    __tablename__ = 'buyers'  # Explicitly set table name
+    __tablename__ = 'buyers'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    password = db.Column(db.String(120), nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    orders = db.relationship('Order', backref='buyer', lazy=True)
-
-# Order Model
-class Order(db.Model):
-    __tablename__ = 'orders'  # Explicitly set table name
-    id = db.Column(db.Integer, primary_key=True)
-    buyer_id = db.Column(db.Integer, db.ForeignKey('buyers.id'), nullable=False)
-    product_id = db.Column(db.Integer, db.ForeignKey('products.id'), nullable=False)
-    quantity = db.Column(db.Integer, nullable=False)
-    total_price = db.Column(db.Float, nullable=False)
-    status = db.Column(db.String(20), default='pending')
+    password = db.Column(db.String(120), nullable=False)  # In production, hash the password!
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-    product = db.relationship('Product', backref='orders')
-
-# Home Route
-@app.route('/')
-def home():
-    return "Welcome to the Marketplace API!", 200
-
-# Product Routes
-@app.route('/products', methods=['GET'])
-def get_products():
-    products = Product.query.all()
-    products_list = []
-
-    for product in products:
-        products_list.append({
-            'id': product.id,
-            'name': product.name,
-            'description': product.description,
-            'price': product.price
-        })
-
-    return jsonify({'products': products_list}), 200
-
-# Buyer Routes
-@app.route('/buyer/register', methods=['POST'])
-def register_buyer():
-    data = request.get_json()
-
-    if not all(key in data for key in ['username', 'email', 'password']):
-        return jsonify({'error': 'Missing required fields'}), 400
-
-    new_buyer = Buyer(
-        username=data['username'],
-        email=data['email'],
-        password=data['password']  # In production, hash the password!
-    )
-
-    try:
-        db.session.add(new_buyer)
-        db.session.commit()
-        return jsonify({'message': 'Buyer registered successfully', 'buyer_id': new_buyer.id}), 201
-    except Exception as e:
-        print(e)
-        db.session.rollback()
-        return jsonify({'error': 'Username or email already exists'}), 400
-
-@app.route('/buyer/orders', methods=['POST'])
-def create_order():
-    data = request.get_json()
-
-    if not all(key in data for key in ['buyer_id', 'product_id', 'quantity']):
-        return jsonify({'error': 'Missing required fields'}), 400
-
-    # Fetch the product to get the price
-    product = Product.query.get(data['product_id'])
-    if not product:
-        return jsonify({'error': 'Product not found'}), 404
-
-    total_price = product.price * data['quantity']
-
-    new_order = Order(
-        buyer_id=data['buyer_id'],
-        product_id=data['product_id'],
-        quantity=data['quantity'],
-        total_price=total_price
-    )
-
-    try:
-        db.session.add(new_order)
-        db.session.commit()
-        return jsonify({'message': 'Order created successfully'}), 201
-    except Exception as e:
-        print(e)
-        db.session.rollback()
-        return jsonify({'error': 'Failed to create order'}), 400
-
-@app.route('/buyer/orders/<int:buyer_id>', methods=['GET'])
-def get_buyer_orders(buyer_id):
-    orders = Order.query.filter_by(buyer_id=buyer_id).all()
-    orders_list = []
-
-    for order in orders:
-        orders_list.append({
-            'id': order.id,
-            'product_id': order.product_id,
-            'product_name': order.product.name,
-            'quantity': order.quantity,
-            'total_price': order.total_price,
-            'status': order.status,
-            'created_at': order.created_at
-        })
-
-    return jsonify({'orders': orders_list}), 200
-
-@app.route('/buyer/profile/<int:buyer_id>', methods=['GET', 'PUT'])
-def buyer_profile(buyer_id):
-    buyer = Buyer.query.get_or_404(buyer_id)
-
-    if request.method == 'GET':
-        return jsonify({
-            'username': buyer.username,
-            'email': buyer.email,
-            'created_at': buyer.created_at
-        }), 200
-
-    elif request.method == 'PUT':
-        data = request.get_json()
-
-        if 'username' in data:
-            buyer.username = data['username']
-        if 'email' in data:
-            buyer.email = data['email']
-
+# Registration Page
+@app.route('/register', methods=['GET', 'POST'])
+def register_page():
+    if request.method == 'POST':
         try:
+            data = request.get_json()
+            if not data:
+                # Handle form data if not JSON
+                username = request.form.get('username')
+                email = request.form.get('email') 
+                password = request.form.get('password')
+            else:
+                username = data.get('username')
+                email = data.get('email')
+                password = data.get('password')
+
+            # Validate required fields
+            if not all([username, email, password]):
+                if request.is_json:
+                    return jsonify({"error": "All fields are required"}), 400
+                return "All fields are required", 400
+
+            # Check if user already exists by username or email
+            existing_user = Buyer.query.filter(
+                (Buyer.email == email) | (Buyer.username == username)
+            ).first()
+            
+            if existing_user:
+                if existing_user.email == email:
+                    if request.is_json:
+                        return jsonify({"error": "Email already registered"}), 400
+                    return "Email already registered", 400
+                else:
+                    if request.is_json:
+                        return jsonify({"error": "Username already taken"}), 400
+                    return "Username already taken", 400
+
+            # Create new user
+            new_user = Buyer(username=username, email=email, password=password)
+            db.session.add(new_user)
             db.session.commit()
-            return jsonify({'message': 'Profile updated successfully'}), 200
+
+            # Log the user in after registration
+            session['buyer_id'] = new_user.id
+            session['username'] = new_user.username
+            
+            if request.is_json:
+                return jsonify({"message": "Registration successful"}), 200
+            return redirect(url_for('shop_page'))
+
         except Exception as e:
-            print(e)
             db.session.rollback()
-            return jsonify({'error': 'Failed to update profile'}), 400
+            if request.is_json:
+                return jsonify({"error": f"Registration failed: {str(e)}"}), 500
+            return "Unable to register. Please try again.", 500
 
+    return render_template('register.html')
+
+# Login Page
+@app.route('/login', methods=['GET', 'POST'])
+def login_page():
+    if request.method == 'POST':
+        data = request.get_json()
+        email = data.get('email')
+        password = data.get('password')
+
+        # Validate user credentials
+        buyer = Buyer.query.filter_by(email=email, password=password).first()
+        if buyer:
+            # Store buyer info in session
+            session['buyer_id'] = buyer.id
+            session['username'] = buyer.username
+            return jsonify({"message": "Login successful"}), 200
+        else:
+            return jsonify({"error": "Invalid credentials. Please try again."}), 401
+
+    return render_template('login.html')  # A form for login
+
+# Shop Page (Product List)
 @app.route('/shop')
-def shop():
-    return render_template('index.html')
+def shop_page():
+    # Check if user is logged in
+    if 'buyer_id' not in session:
+        return redirect(url_for('login_page'))  # Redirect to login if not logged in
 
+    # Fetch all products
+    products = Product.query.all()
+    return render_template('shop.html', products=products)  # Render product list
+
+# Run the app
 if __name__ == '__main__':
     with app.app_context():
-        db.create_all()
-
-        # Add sample products if they don't exist
-        if not Product.query.first():
-            sample_products = [
-                Product(name='Widget A', description='A useful widget.', price=19.99),
-                Product(name='Gadget B', description='An amazing gadget.', price=29.99),
-                Product(name='Thingamajig C', description='An essential thingamajig.', price=9.99),
-            ]
-            db.session.bulk_save_objects(sample_products)
-            db.session.commit()
-
+        db.create_all()  # Create database tables
     app.run(debug=True)
