@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ product.name }} - Pet Details</title>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #b5651d 0%, #d2691e 100%);
+            margin: 0;
+            padding: 40px 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-detail {
+            max-width: 800px;
+            margin: auto;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .product-image {
+            grid-column: 1;
+            position: relative;
+            overflow: hidden;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .product-image img {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .product-image:hover img {
+            transform: scale(1.05);
+        }
+
+        .product-info {
+            grid-column: 2;
+            display: flex;
+            flex-direction: column;
+        }
+
+        h1 {
+            font-family: 'Pacifico', cursive;
+            color: #d2691e;
+            margin: 0 0 20px 0;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .info-row {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            padding: 10px;
+            background: rgba(210, 105, 30, 0.1);
+            border-radius: 10px;
+        }
+
+        .label {
+            font-weight: 600;
+            color: #8b4513;
+            width: 80px;
+        }
+
+        .value {
+            color: #333;
+            flex: 1;
+        }
+
+        .description {
+            margin: 20px 0;
+            line-height: 1.6;
+            color: #555;
+        }
+
+        .price-section {
+            margin-top: auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 20px;
+            border-top: 2px solid rgba(210, 105, 30, 0.2);
+        }
+
+        .price {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #d2691e;
+        }
+
+        .adopt-button {
+            padding: 15px 30px;
+            background: linear-gradient(45deg, #cd853f, #d2691e);
+            border: none;
+            border-radius: 25px;
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 5px 15px rgba(210, 105, 30, 0.3);
+        }
+
+        .adopt-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(210, 105, 30, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            .product-detail {
+                grid-template-columns: 1fr;
+            }
+            
+            .product-image, .product-info {
+                grid-column: 1;
+            }
+        }
+    </style>
+    <script src="{{ url_for('static', filename='productDetails.js') }}"></script>
+</head>
+<body>
+    <div class="product-detail">
+        <div class="product-image">
+            <img src="{{ product.image_url }}" alt="{{ product.name }}">
+        </div>
+        <div class="product-info">
+            <h1>{{ product.name }}</h1>
+            <div class="info-row">
+                <span class="label">Age:</span>
+                <span class="value">{{ product.age }} years</span>
+            </div>
+            <div class="description">
+                <p>{{ product.description }}</p>
+            </div>
+            <div class="price-section">
+                <span class="price">${{ product.price }}</span>
+                <button class="adopt-button">Adopt Now</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

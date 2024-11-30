@@ -50,6 +50,9 @@
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             overflow: hidden;
             position: relative;
+            text-decoration: none;
+            display: block;
+            cursor: pointer;
         }
 
         .product-card:hover {
@@ -130,12 +133,12 @@
     <h2>Available for adoption</h2>
     <div class="products-container">
         {% for product in products %}
-        <div class="product-card">
+        <a href="{{ url_for('product_details', product_id=product.id) }}" class="product-card">
             <img src="{{ product.image_url }}" alt="{{ product.name }}">
             <h3>{{ product.name }}</h3>
             <p>{{ product.description }}</p>
             <p class="price">$ {{ product.price }}</p>
-        </div>
+        </a>
         {% else %}
         <p>No products available at the moment.</p>
         {% endfor %}
