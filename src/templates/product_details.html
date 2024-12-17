@@ -16,54 +16,24 @@
             flex-direction: column;
         }
 
-        .product-detail {
+        .container {
             max-width: 800px;
             margin: auto;
             background: rgba(255, 255, 255, 0.95);
             padding: 30px;
             border-radius: 20px;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            animation: fadeIn 0.8s ease-out;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        .section {
+            margin-bottom: 30px;
         }
 
-        .product-image {
-            grid-column: 1;
-            position: relative;
-            overflow: hidden;
-            border-radius: 15px;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-        }
-
-        .product-image img {
-            width: 100%;
-            height: 400px;
-            object-fit: cover;
-            transition: transform 0.3s ease;
-        }
-
-        .product-image:hover img {
-            transform: scale(1.05);
-        }
-
-        .product-info {
-            grid-column: 2;
-            display: flex;
-            flex-direction: column;
-        }
-
-        h1 {
+        .section-title {
             font-family: 'Pacifico', cursive;
             color: #d2691e;
-            margin: 0 0 20px 0;
-            font-size: 2.5rem;
+            margin-bottom: 15px;
+            font-size: 2rem;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
         }
 
@@ -79,7 +49,7 @@
         .label {
             font-weight: 600;
             color: #8b4513;
-            width: 80px;
+            width: 120px;
         }
 
         .value {
@@ -87,25 +57,12 @@
             flex: 1;
         }
 
-        .description {
-            margin: 20px 0;
-            line-height: 1.6;
-            color: #555;
-        }
-
-        .price-section {
-            margin-top: auto;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding-top: 20px;
-            border-top: 2px solid rgba(210, 105, 30, 0.2);
-        }
-
-        .price {
-            font-size: 2rem;
-            font-weight: 600;
-            color: #d2691e;
+        .product-image img {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
         }
 
         .adopt-button {
@@ -125,38 +82,55 @@
             transform: translateY(-2px);
             box-shadow: 0 8px 20px rgba(210, 105, 30, 0.4);
         }
-
-        @media (max-width: 768px) {
-            .product-detail {
-                grid-template-columns: 1fr;
-            }
-            
-            .product-image, .product-info {
-                grid-column: 1;
-            }
-        }
     </style>
-    <script src="{{ url_for('static', filename='productDetails.js') }}"></script>
 </head>
 <body>
-    <div class="product-detail">
-        <div class="product-image">
-            <img src="{{ product.image_url }}" alt="{{ product.name }}">
-        </div>
-        <div class="product-info">
-            <h1>{{ product.name }}</h1>
+    <div class="container">
+        <!-- Pet Details Section -->
+        <div class="section">
+            <h2 class="section-title">Pet Details</h2>
+            <div class="product-image">
+                <img src="{{ product.image_url }}" alt="{{ product.name }}">
+            </div>
+            <div class="info-row">
+                <span class="label">Name:</span>
+                <span class="value">{{ product.name }}</span>
+            </div>
             <div class="info-row">
                 <span class="label">Age:</span>
                 <span class="value">{{ product.age }} years</span>
             </div>
+            <div class="info-row">
+                <span class="label">Price:</span>
+                <span class="value">${{ product.price }}</span>
+            </div>
             <div class="description">
                 <p>{{ product.description }}</p>
             </div>
-            <div class="price-section">
-                <span class="price">${{ product.price }}</span>
-                <button class="adopt-button">Adopt Now</button>
+            <button class="adopt-button">Adopt Now</button>
+        </div>
+        <!-- Seller Details Section -->
+        {% if seller %}
+        <div class="section">
+            <h2 class="section-title">Seller Details</h2>
+            <div class="info-row">
+                <span class="label">Name:</span>
+                <span class="value">{{ seller.name }}</span>
+            </div>
+            <div class="info-row">
+                <span class="label">Phone:</span>
+                <span class="value">{{ seller.phone_number }}</span>
+            </div>
+            <div class="info-row">
+                <span class="label">Address:</span>
+                <span class="value">{{ seller.address }}</span>
+            </div>
+            <div class="info-row">
+                <span class="label">Home Delivery:</span>
+                <span class="value">{% if seller.home_delivery %}Yes{% else %}No{% endif %}</span>
             </div>
         </div>
+        {% endif %}
     </div>
 </body>
 </html>

@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const closeButton = document.createElement("button");
     closeButton.className = "modal-close";
     closeButton.innerHTML = "&times;";
-    
+
     // Add loading spinner
     const loadingSpinner = document.createElement("div");
     loadingSpinner.className = "loading-spinner";
@@ -42,10 +42,40 @@ document.addEventListener("DOMContentLoaded", () => {
                                 <span class="price">$${product.price}</span>
                                 <button class="adopt-button">Adopt Now</button>
                             </div>
+                            <div id="seller-details" class="seller-details">
+                                <!-- Seller details will be loaded here -->
+                            </div>
                         </div>
                     </div>
                 `;
-                
+
+                const adoptButton = detailContent.querySelector(".adopt-button");
+                adoptButton.addEventListener("click", async () => {
+                    const sellerDetailsDiv = document.getElementById("seller-details");
+                    sellerDetailsDiv.innerHTML = "Loading seller details...";
+
+                    try {
+                        const sellerResponse = await fetch(`/api/seller/${product.seller_id}`);
+                        if (!sellerResponse.ok) {
+                            throw new Error("Failed to fetch seller details");
+                        }
+                        const seller = await sellerResponse.json();
+
+                        sellerDetailsDiv.innerHTML = `
+                            <div class="seller-info">
+                                <h2>Seller Details</h2>
+                                <p><strong>Name:</strong> ${seller.seller_name}</p>
+                                <p><strong>Phone:</strong> ${seller.phone_number}</p>
+                                <p><strong>Address:</strong> ${seller.address}</p>
+                                <p><strong>Home Delivery:</strong> ${seller.home_delivery ? "Yes" : "No"}</p>
+                            </div>
+                        `;
+                    } catch (error) {
+                        console.error(error.message);
+                        sellerDetailsDiv.textContent = "Unable to load seller details. Please try again.";
+                    }
+                });
+
                 detailModal.appendChild(closeButton);
                 detailModal.classList.add("fade-in");
                 detailModal.style.display = "block";
@@ -91,7 +121,7 @@ document.addEventListener("DOMContentLoaded", () => {
         errorDiv.className = "error-message";
         errorDiv.textContent = message;
         document.body.appendChild(errorDiv);
-        
+
         setTimeout(() => {
             errorDiv.remove();
         }, 3000);

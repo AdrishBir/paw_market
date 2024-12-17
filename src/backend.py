@@ -1,7 +1,9 @@
 from flask import Flask, request, jsonify, render_template, redirect, url_for, session
 from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate  # Add this line
 from datetime import datetime
 import os
+from sqlalchemy import text
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)  # To keep session data safe
@@ -10,11 +12,13 @@ app.secret_key = os.urandom(24)  # To keep session data safe
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://petcare:password@localhost:5002/petcare'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 
 # Static File Configuration
 app.static_folder = 'static'
 
 # Models
+# Update Product Model
 class Product(db.Model):
     __tablename__ = 'products'
     id = db.Column(db.Integer, primary_key=True)
@@ -24,6 +28,21 @@ class Product(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     image_url = db.Column(db.String(200))
     age = db.Column(db.Integer)
+
+    # Foreign key for Seller
+    seller_id = db.Column(db.Integer, db.ForeignKey('sellers.id'), nullable=False)
+    
+class Seller(db.Model):
+    __tablename__ = 'sellers'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    phone_number = db.Column(db.String(15), nullable=False)
+    address = db.Column(db.Text, nullable=False)
+    home_delivery = db.Column(db.Boolean, default=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    # Relationship with Product
+    products = db.relationship('Product', backref='seller', lazy=True)
 
 class Buyer(db.Model):
     __tablename__ = 'buyers'
@@ -100,7 +119,8 @@ def shop_page():
 def product_details(product_id):
     product = Product.query.get(product_id)
     if product:
-        return render_template('product_details.html', product=product)
+        seller = Seller.query.get(product.seller_id)
+        return render_template('product_details.html', product=product, seller=seller)
     else:
         return "Product not found", 404
 
@@ -115,7 +135,8 @@ def api_product_details(product_id):
             "age": product.age,
             "description": product.description,
             "price": product.price,
-            "image_url": product.image_url
+            "image_url": product.image_url,
+            "seller_id": product.seller_id  # Include seller_id in the response
         })
     else:
         return jsonify({"error": "Product not found"}), 404
@@ -124,16 +145,41 @@ def api_product_details(product_id):
 @app.route('/list-pet', methods=['GET', 'POST'])
 def list_pet():
     if request.method == 'POST':
+        # Pet details
         name = request.form.get('name')
         age = request.form.get('age')
         description = request.form.get('description')
         image_url = request.form.get('image_url')
 
-        if not all([name, age, description, image_url]):
+        # Seller details
+        seller_name = request.form.get('seller_name')
+        phone_number = request.form.get('phone_number')
+        address = request.form.get('address')
+        home_delivery = request.form.get('home_delivery') == 'on'
+
+        if not all([name, age, description, image_url, seller_name, phone_number, address]):
             return "All fields are required", 400
 
         try:
-            new_pet = Product(name=name, description=description, age=int(age), image_url=image_url, price=0)
+            # Create new seller
+            seller = Seller(
+                name=seller_name,
+                phone_number=phone_number,
+                address=address,
+                home_delivery=home_delivery
+            )
+            db.session.add(seller)
+            db.session.flush()  # Flush to get the seller ID
+
+            # Create new product linked to the seller
+            new_pet = Product(
+                name=name, 
+                description=description, 
+                age=int(age), 
+                image_url=image_url, 
+                price=0, 
+                seller_id=seller.id
+            )
             db.session.add(new_pet)
             db.session.commit()
             return redirect(url_for('shop_page'))
@@ -143,7 +189,21 @@ def list_pet():
 
     return render_template('list_pet.html')
 
+# API Endpoint to fetch seller details
+# @app.route('/api/seller/<int:seller_id>')
+# def api_seller_details(seller_id):
+#     seller = Seller.query.get(seller_id)
+#     if seller:
+#         return jsonify({
+#             "seller_name": seller.name,
+#             "phone_number": seller.phone_number,
+#             "address": seller.address,
+#             "home_delivery": seller.home_delivery
+#         })
+#     else:
+#         return jsonify({"error": "Seller not found"}), 404
+
 if __name__ == '__main__':
     with app.app_context():
-        db.create_all()
+        db.create_all()  # Create new tables with updated schema
     app.run(debug=True)
