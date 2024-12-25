@@ -13,104 +13,84 @@
             margin: 0;
             padding: 0;
             background: url('https://as1.ftcdn.net/v2/jpg/04/62/19/20/1000_F_462192023_MApCjn680UHnnKbDsK9ZYY03OIt8OIsF.jpg') no-repeat;
-            background-size: contain; /* Ensure full image without zooming */
-            background-position: right center; /* Shift image to the right */
-            background-attachment: fixed; /* Keep image fixed on scroll */
+            background-size: contain;
+            background-position: right center;
+            background-attachment: fixed;
             color: #333;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             position: relative;
-            opacity: 0.95;
         }
 
         header {
-            background: rgba(101, 67, 33, 0.3);
+            background: rgba(0, 128, 0, 0.5);
             padding: 1.5rem 0;
             text-align: center;
+            color: white;
             position: relative;
             z-index: 1;
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         h1 {
             margin: 0;
             font-family: 'Pacifico', cursive;
             font-size: 2.5rem;
-            color: #f4a460;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         }
 
         main {
             width: 90%;
             max-width: 400px;
-            margin: 2rem 10%; /* Shift login block to the left */
+            margin: 2rem 10%;
             padding: 2rem 0;
-            position: relative;
-            z-index: 1;
-            animation: fadeIn 1s ease-out;
-            box-sizing: border-box;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+            background: rgba(0, 128, 0, 0.2);
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 128, 0, 0.2);
+            text-align: center;
         }
 
         form input {
-            width: 100%;
-            padding: 1rem;
-            margin: 0.8rem 0;
-            border: 2px solid #b87333; /* Copper-like border color */
+            width: 80%; /* Reduced to 80% of the original width */
+            padding: 0.8rem; /* Slightly smaller padding */
+            margin: 0.8rem auto; /* Centered margin */
+            border: 2px solid #228B22;
             border-radius: 8px;
-            font-size: 1rem;
-            background: #f5f5f5; /* Light gray background */
-            box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.3), 
-                        inset -2px -2px 5px rgba(255, 255, 255, 0.6), 
-                        inset 2px 2px 5px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-            box-sizing: border-box;
+            font-size: 0.9rem; /* Slightly smaller font size */
+            background: #f5f5f5;
         }
 
         form button {
-            width: 100%;
-            padding: 1rem;
+            width: 80%; /* Matches input size */
+            padding: 0.8rem;
             margin-top: 1.5rem;
             border: none;
-            border-radius: 15px;
-            font-size: 1.1rem;
+            border-radius: 8px;
+            font-size: 1rem;
             font-weight: 600;
             color: white;
-            background: linear-gradient(45deg, #cd853f, #d2691e);
+            background: linear-gradient(45deg, #32CD32, #228B22);
             cursor: pointer;
-            transition: 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
         }
 
         footer {
             text-align: center;
             padding: 1.5rem;
-            background: rgba(101, 67, 33, 0.3);
-            color: #f4a460;
+            background: rgba(0, 128, 0, 0.5);
+            color: white;
             margin-top: auto;
             position: relative;
-            z-index: 1;
-            backdrop-filter: blur(10px);
-            border-top: 1px solid rgba(0, 0, 0, 0.2);
         }
 
         #login-message {
-            text-align: center;
-            color: #d2691e;
-            font-weight: 600;
             margin-top: 1rem;
+            color: #228B22;
+            font-weight: 600;
         }
     </style>
 </head>
 <body>
     <header>
-        <h1>Welcome Back!</h1>
+        <h1>Welcome!</h1>
     </header>
     <main>
         <form id="login-form">

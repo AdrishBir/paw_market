@@ -6,39 +6,35 @@
     <title>List a Pet</title>
     <style>
         /* General Styles */
+        /* General Styles */
         body {
             margin: 0;
-            padding: 20px;
-            background: linear-gradient(to bottom, #e6f7ff, #ffffff); /* Changed background to light green */
+            padding: 0;
+            background: url('https://i.pinimg.com/736x/32/46/9d/32469d651a7ba85621a72d0a616cf58c.jpg') no-repeat center center fixed;
+            background-size: 100%; /* Reduced zoom by 30% */
             display: flex;
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
-            font-family: 'Lato', sans-serif; /* Changed font to Lato */
+            font-family: 'Roboto', sans-serif;
             color: #333;
         }
-
-        h1, h2 {
-            margin-bottom: 20px;
-            text-align: center;
-            color: #444;
-        }
-
+        
+        /* Heading Styles */
         h1 {
             font-size: 2.8rem;
-            color: #2C3E50;
+            color: transparent; /* Make the text transparent */
+            font-family: 'Pacifico', cursive; /* Cursive font */
+            background: linear-gradient(90deg, #000000, #333333); /* Black gradient */
+            -webkit-background-clip: text; /* Apply gradient only to the text */
+            text-align: center;
+            text-shadow: 0 0 10px rgba(76, 175, 80, 0.7), 0 0 20px rgba(76, 175, 80, 0.6), 0 0 30px rgba(76, 175, 80, 0.5);
         }
-
-        h2 {
-            font-size: 1.6rem;
-            margin-top: 15px;
-            border-bottom: 2px solid #ddd;
-            padding-bottom: 5px;
-        }
-
+        
+        
         /* Form Container */
         form {
-            background: #ffffff;
+            background-color: rgba(255, 255, 255, 0.5); /* Semi-transparent white background */
             padding: 25px 30px;
             border-radius: 15px;
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
@@ -46,7 +42,15 @@
             max-width: 550px;
             animation: fadeIn 0.5s ease-in-out;
         }
-
+                /* Heading Styles for Sections */
+        h2 {
+            font-size: 1.6rem;
+            margin-top: 15px;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 5px;
+            color: #2C3E50; /* Ensure the color of the subheadings is visible */
+        }
+        
         /* Labels & Inputs */
         label {
             display: block;
@@ -54,7 +58,7 @@
             font-weight: 600;
             color: #555;
         }
-
+        
         input, textarea, select {
             width: 100%;
             padding: 12px;
@@ -65,31 +69,18 @@
             box-sizing: border-box;
             transition: border 0.3s ease, box-shadow 0.3s ease;
         }
-
+        
         input:focus, textarea:focus, select:focus {
             outline: none;
             border-color: #4CAF50;
             box-shadow: 0 0 8px rgba(76, 175, 80, 0.4);
         }
-
+        
         textarea {
             height: 120px;
             resize: vertical;
         }
-
-        /* Checkbox Container */
-        .checkbox-container {
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
-            gap: 10px;
-        }
-
-        .checkbox-container input {
-            width: auto;
-            margin: 0;
-        }
-
+        
         /* Button Styles */
         button {
             background: linear-gradient(to right, #4CAF50, #45a049);
@@ -103,22 +94,23 @@
             transition: transform 0.2s ease, box-shadow 0.2s ease;
             width: 100%;
         }
-
+        
         button:hover {
             transform: translateY(-3px);
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
         }
-
+        
         /* Keyframe Animations */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(30px); }
             to { opacity: 1; transform: translateY(0); }
-        }
+        }        
     </style>
 </head>
 <body>
+    <div class="overlay"></div> <!-- Dark overlay for readability -->
     <h1>List Your Pet for Adoption</h1>
-    <form method="POST">
+    <form method="POST" enctype="multipart/form-data">
         <!-- Seller Details -->
         <div class="seller-details">
             <h2>Seller Details</h2>
@@ -131,39 +123,51 @@
             <label for="address">Address:</label>
             <textarea id="address" name="address" required placeholder="Enter your complete address"></textarea>
 
-            <div class="checkbox-container">
-                <input type="checkbox" id="home_delivery" name="home_delivery">
-                <label for="home_delivery">Provides Home Delivery</label>
-            </div>
+            <label for="state">State:</label>
+            <input type="text" id="state" name="state" required placeholder="Enter your state">
+
+            <label for="pincode">Pincode:</label>
+            <input type="text" id="pincode" name="pincode" required placeholder="Enter your pincode">
         </div>
 
-        <!-- Pet Details -->
-        <div class="pet-details">
-            <h2>Pet Details</h2>
-            <label for="name">Name:</label>
-            <input type="text" id="name" name="name" required placeholder="Enter pet's name">
+<!-- Pet Details -->
+<div class="pet-details">
+    <h2>Pet Details</h2>
+    
+    <!-- Type of Pet -->
+    <label for="type_of_pet">Type of Pet:</label>
+    <select id="type_of_pet" name="type_of_pet" required>
+        <option value="">Select Type</option>
+        <option value="cat">Cat</option>
+        <option value="dog">Dog</option>
+        <option value="bird">Bird</option>
+        <option value="fish">Fish</option>
+    </select>
 
-            <label for="age">Age (in years):</label>
-            <input type="number" id="age" name="age" min="0" required placeholder="e.g., 2">
+    <!-- Pet Name -->
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name" required placeholder="Enter pet's name">
 
-            <label for="description">Description:</label>
-            <textarea id="description" name="description" required placeholder="Describe your pet's personality and traits"></textarea>
+    <!-- Pet Date of Birth -->
+    <label for="dob">Date of Birth:</label>
+    <input type="date" id="dob" name="dob" required>
 
-            <label for="image_url">Image URL:</label>
-            <input type="url" id="image_url" name="image_url" required placeholder="e.g., https://example.com/image.jpg">
+    <!-- Pet Age -->
+    <label for="age">Age (in days or months):</label>
+    <input type="number" id="age" name="age" min="0" required placeholder="e.g., 2">
 
-            <label for="breed">Breed:</label>
-            <input type="text" id="breed" name="breed" required placeholder="Enter pet's breed">
+    <!-- Pet Description -->
+    <label for="description">Description:</label>
+    <textarea id="description" name="description" required placeholder="Describe your pet's personality and traits"></textarea>
 
-            <label for="type_of_pet">Type of Pet:</label>
-            <select id="type_of_pet" name="type_of_pet" required>
-                <option value="">Select Type</option>
-                <option value="cat">Cat</option>
-                <option value="dog">Dog</option>
-                <option value="bird">Bird</option>
-                <option value="fish">Fish</option>
-            </select>
-        </div>
+    <!-- Image Upload -->
+    <label for="image">Pet Image:</label>
+    <input type="file" id="image" name="image" accept="image/*" required>
+
+    <!-- Pet Breed -->
+    <label for="breed">Breed:</label>
+    <input type="text" id="breed" name="breed" required placeholder="Enter pet's breed">
+</div>
 
         <!-- Submit Button -->
         <button type="submit">List Pet</button>

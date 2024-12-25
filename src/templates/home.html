@@ -9,7 +9,7 @@
         body {
             margin: 0;
             padding: 0;
-            background: linear-gradient(135deg, #e0f7fa, #f1f8e9);
+            background: linear-gradient(135deg, #d0f0c0, #f1f8e9); /* Updated to light green */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -22,73 +22,91 @@
         .page-wrapper {
             display: flex;
             align-items: center;
-            gap: 50px;
+            gap: 30px;
             max-width: 1200px;
             margin: 0 auto;
+            justify-content: flex-start; /* Align items to the left */
         }
+        
 
         .container {
-            text-align: center;
-            padding: 30px;
+            text-align: left; /* Align the content inside the container to the left */
+            padding: 24px;
             background-color: #ffffff;
             border-radius: 15px;
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
             display: flex;
             flex-direction: column;
-            gap: 20px;
-            animation: fadeIn 1s ease-in-out;
+            gap: 16px;
+            width: 320px;
+            margin-left: -175px;
         }
+        
 
         h1 {
             font-family: 'Pacifico', cursive;
-            font-size: 3rem;
+            font-size: 2.88rem; /* Increased by 20% */
             color: #4CAF50;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
+            text-align: left; /* Pushed to the left */
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
         }
 
         p.info-text {
             font-size: 1.2rem;
             color: #555;
-            margin-bottom: 20px;
+            background: linear-gradient(90deg, #D4AF37, #A9A9A9, #D4AF37); /* Softer gold and silver gradient */
+            background-size: 200% auto; /* Double width for animation */
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent; /* Show only the gradient */
+            animation: shine 2s linear infinite; /* Animate gradient */
         }
-
+        
+        @keyframes shine {
+            0% {
+                background-position: 0% 50%; /* Start position */
+            }
+            100% {
+                background-position: 100% 50%; /* End position */
+            }
+        }
+        
         .options {
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 12px;
         }
 
         .option-btn {
-            padding: 15px;
-            font-size: 1.2rem;
-            background: linear-gradient(135deg, #4CAF50, #66BB6A);
+            padding: 12px;
+            font-size: 1rem;
+            background: linear-gradient(135deg, #4CAF50, #66BB6A); /* Gradient for 3D effect */
             color: white;
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
             cursor: pointer;
-            transition: transform 0.3s, box-shadow 0.3s;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3), 
+                        inset 0 -3px 5px rgba(0, 0, 0, 0.2); /* Outer and inset shadow for depth */
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
-
+        
         .option-btn:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 6px 15px rgba(76, 175, 80, 0.4);
+            transform: translateY(-5px); /* Floating effect on hover */
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4), 
+                        inset 0 -3px 5px rgba(0, 0, 0, 0.2); /* Stronger shadow on hover */
         }
-
-        .option-btn i {
-            font-size: 1.5rem;
-            animation: bounce 2s infinite;
+        
+        .option-btn:active {
+            transform: translateY(2px); /* Slight press-in effect */
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2), 
+                        inset 0 3px 5px rgba(0, 0, 0, 0.3); /* Adjusted shadow for active state */
         }
+        
 
         .footer {
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             color: #777;
-            margin-top: 15px;
         }
 
         .footer a {
@@ -100,78 +118,41 @@
             text-decoration: underline;
         }
 
-        .pet-animation {
-            position: relative;
-            width: 400px;
-            height: 400px;
-        }
-
-        .pet {
-            position: absolute;
-            width: 100px;
-            height: 100px;
-            background-size: contain;
-            animation: float 3s ease-in-out infinite;
-        }
-
-        .pet:nth-child(1) {
-            top: 20px; left: 10px;
-            background-image: url('https://cdn-icons-png.flaticon.com/512/1998/1998627.png');
-        }
-
-        .pet:nth-child(2) {
-            bottom: 20px; right: 30px;
-            width: 80px; height: 80px;
-            background-image: url('https://cdn-icons-png.flaticon.com/512/1998/1998592.png');
-            animation-delay: 0.5s;
-        }
-
-        @keyframes fadeIn {
-            0% { opacity: 0; transform: translateY(30px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-20px); }
-        }
-
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-            40% { transform: translateY(-5px); }
-            60% { transform: translateY(-3px); }
+        .image-wrapper img {
+            width: 130%; /* Increase width by 30% */
+            height: auto; /* Maintain aspect ratio */
+            border-radius: 8px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
         }
 
         @media (max-width: 768px) {
             .page-wrapper {
                 flex-direction: column;
-                gap: 20px;
+                gap: 10px;
+            }
+
+            .image-wrapper img {
+                max-width: 100%;
             }
         }
     </style>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <body>
     <div class="page-wrapper">
         <div class="container">
-            <h1>Find Your Perfect Pet</h1>
-            <p class="info-text">Adopt a loving companion or help one find a home today!</p>
+            <h1>Find Your New Best Friend</h1>
+            <p class="info-text">Adopt a loving companion or help them find a home today!</p>
 
             <div class="options">
-                <button class="option-btn" id="adoptBtn">
-                    <i class="fas fa-paw"></i> Adopt a Pet
-                </button>
-                <button class="option-btn" id="postAdoptBtn">
-                    <i class="fas fa-house-user"></i> Post a Pet for Adoption
-                </button>
+                <button class="option-btn" id="adoptBtn">Adopt a Pet</button>
+                <button class="option-btn" id="postAdoptBtn">Post a Pet for Adoption</button>
             </div>
 
             <p class="footer">Questions? <a href="mailto:support@petadopt.com">Contact us</a></p>
         </div>
 
-        <div class="pet-animation">
-            <div class="pet"></div>
-            <div class="pet"></div>
+        <div class="image-wrapper">
+            <img src="https://img.freepik.com/free-vector/collection-hand-drawn-people-with-animals_52683-66528.jpg" alt="People with Animals">
         </div>
     </div>
 
